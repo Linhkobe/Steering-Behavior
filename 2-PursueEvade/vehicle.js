@@ -35,7 +35,10 @@ class Vehicle {
 
   // inverse de seek !
   flee(target) {
-    return this.seek(target.pos).mult(-1);
+    if (target && target.pos) {  // Ensure target and its position are valid
+      return this.seek(target.pos).mult(-1);  // Flee is the opposite of seek
+    }
+    return createVector(0, 0);  // Return zero vector if target or position is invalid
   }
 
   /* Poursuite d'un point devant la target !
@@ -43,20 +46,24 @@ class Vehicle {
   */
   pursue(target) {
     // TODO
+    if (target && target.vel) {
+      console.log("Pursue: Target velocity:", target.vel);
     // 1 - calcul de la position future de la cible
-    // on fait une copie de la position de la target
+      let distance = p5.Vector.dist(this.pos, target.pos);
+      let predictionFrames = map(distance, 0, this.maxSpeed, 0, 30);
+      let prediction = target.vel.copy();
+      prediction.mult(predictionFrames);
+      prediction.add(target.pos);
     // 2 - On calcule un vecteur colinéaire au vecteur vitesse de la cible,
-    let prediction = target.vel.copy();
     // et on le multiplie par 10 (10 frames)
     // 3 - prediction dans 10 frames = 10 fois la longueur du vecteur
-    prediction.mult(10);
+    //prediction.mult(10);
     // 4 - on positionne de la target au bout de ce vecteur
-    prediction.add(target.pos);
 
     // dessin du vecteur prediction
-    let v = p5.Vector.sub(prediction, target.pos);
+/*     let v = p5.Vector.sub(prediction, target.pos);
     this.drawVector(target.pos, v);
-
+ */
 
     // 2 - dessin d'un cercle vert de rayon 16 pour voir ce point
     fill("green");
@@ -67,14 +74,26 @@ class Vehicle {
 
     // n'oubliez pas, on renvoie la force à appliquer au véhicule !
     return force;
+    }
   }
 
   /* inverse de pursue
      cette methode renvoie la force à appliquer au véhicule
   */
   evade(target) {
-    let force = this.pursue(target);
-    return(force.mult(-1));
+/*     let force = this.pursue(target);
+    return(force.mult(-1)); */
+    if (target && target.vel.mag() > 0) {
+      console.log("Evade: Target velocity:", target.vel);
+      let prediction = target.vel.copy();
+      prediction.mult(10);
+      prediction.add(target.pos);
+
+      let force = this.flee(prediction);
+
+      return force;
+    }
+    return createVector(0, 0);
   }
 
   // applyForce est une méthode qui permet d'appliquer une force au véhicule

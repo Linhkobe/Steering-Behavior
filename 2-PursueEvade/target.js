@@ -4,6 +4,14 @@ class Target extends Vehicle {
       this.vel = p5.Vector.random2D();
       this.vel.mult(6);
     }
+
+    update() {
+      // Ensure the target continues to move
+      this.pos.add(this.vel);
+
+      // Handle edge wrapping
+      this.edges();
+    }
   
     show() {
       stroke(255);

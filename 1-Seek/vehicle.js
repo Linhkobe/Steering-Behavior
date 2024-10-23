@@ -15,9 +15,37 @@ class Vehicle {
   }
 
   applyBehaviors(target) {
-    let force = this.seek(target);
-    this.applyForce(force);
+    //let force = this.seek(target);
+    //this.applyForce(force);
+
+    
+      // Etape 3.1 de l'exercice de TP
+      let fleeForce = this.flee(target);
+      let seekForce = this.seek(target);
+
+      let distance = p5.Vector.dist(this.pos, target);
+
+      // Etape 4 de l'exercice de TP
+      if (distance < this.r) {
+        target.visible = false;
+
+        // Etape 7 de l'exercice de TP
+        setTimeout(() => {
+        //this.pos = createVector(random(width), random(height));
+        // Etape 6 de l'exercice de TP
+        target.x = random(width);
+        target.y = random(height);
+        },500);
+      } else {
+        if (distance < 100) {
+          this.applyForce(fleeForce);
+        } else {
+          this.applyForce(seekForce);
+        }
+      }
+    
   }
+
   // seek est une méthode qui permet de faire se rapprocher le véhicule de la cible passée en paramètre
   seek(target) {
     // on calcule la direction vers la cible
@@ -60,17 +88,28 @@ class Vehicle {
 
     // on remet l'accélération à zéro
     this.acc.set(0, 0);
+
+    // Etape 1 de l'exericice de TP
+    this.edges();
   }
 
   // On dessine le véhicule
   show() {
+
+    // Etape 3.2 de l'exercice de TP
+    let distance = p5.Vector.dist(this.pos, target.pos);
+    if (distance < 100) {
+      fill("red");
+    } else {
+      fill("white");
+    }
     // formes fil de fer en blanc
     stroke(255);
     // épaisseur du trait = 2
     strokeWeight(2);
 
     // formes pleines en blanc
-    fill(255);
+    //fill(255);
 
     // sauvegarde du contexte graphique (couleur pleine, fil de fer, épaisseur du trait, 
     // position et rotation du repère de référence)
@@ -87,7 +126,7 @@ class Vehicle {
 
     // draw velocity vector
     pop();
-    this.drawVelocityVector();
+    //this.drawVelocityVector();
   }
 
   drawVelocityVector() {
@@ -123,16 +162,24 @@ class Vehicle {
   }
 }
 
+// Etape 5 de l'exercice de TP
 class Target extends Vehicle {
   constructor(x, y) {
     super(x, y);
     this.vel = createVector(random(4, 8), random(4, 8));
+    this.visible = true;
   }
 
   show() {
-    fill("green");
+    if (this.visible) {
+    fill("blue");
     noStroke();
     circle(this.pos.x, this.pos.y, 32);
+    }
   }
 
+  update() {
+    this.pos.add(this.vel);
+    this.edges();
+  }
 }
