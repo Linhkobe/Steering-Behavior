@@ -66,23 +66,24 @@ class Vehicle {
  */
 
     // 2 - dessin d'un cercle vert de rayon 16 pour voir ce point
-    fill("green");
-    circle(prediction.x, prediction.y, 20);
+    //fill("green");
+    //circle(prediction.x, prediction.y, 20);
 
     // 3 - appel à seek avec ce point comme cible 
     let force = this.seek(prediction);
+    let blendingFactor = map(distance, 0, 200, 1, 0.5); 
+    force.mult(blendingFactor);
 
     // n'oubliez pas, on renvoie la force à appliquer au véhicule !
     return force;
     }
+    return createVector(0, 0);
   }
 
   /* inverse de pursue
      cette methode renvoie la force à appliquer au véhicule
   */
   evade(target) {
-/*     let force = this.pursue(target);
-    return(force.mult(-1)); */
     if (target && target.vel.mag() > 0) {
       console.log("Evade: Target velocity:", target.vel);
       let prediction = target.vel.copy();
@@ -90,6 +91,10 @@ class Vehicle {
       prediction.add(target.pos);
 
       let force = this.flee(prediction);
+
+      let distance = p5.Vector.dist(this.pos, target.pos);
+      let blendingFactor = map(distance, 0, 200, 1, 0.5);
+      force.mult(blendingFactor);
 
       return force;
     }

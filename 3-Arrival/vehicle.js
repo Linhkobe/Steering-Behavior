@@ -27,16 +27,16 @@ class Vehicle {
     return this.seek(target);
   }
 
-  arrive(target, d = 0) {
+  arrive(target, stopDistance = 50, d = 0) {
     // 2nd argument true enables the arrival behavior
-    return this.seek(target, true, d);
+    return this.seek(target, true, stopDistance);
   }
 
   flee(target) {
     // recopier code de flee de l'exemple précédent
   }
 
-  seek(target, arrival = false, d) {
+  seek(target, arrival = false, stopDistance = 50) {
     let force = p5.Vector.sub(target, this.pos);
     let desiredSpeed = this.maxSpeed;
 
@@ -67,9 +67,12 @@ class Vehicle {
       // qui devient inversement proportionnelle à la distance.
       // si d = rayon alors desiredSpeed = maxSpeed
       // si d = 0 alors desiredSpeed = 0
-      if(distance < this.rayonZoneDeFreinage) {
+/*       if(distance < this.rayonZoneDeFreinage) {
         desiredSpeed = map(distance, d, this.rayonZoneDeFreinage, 0, this.maxSpeed);
-      }
+      } */
+     if (distance < stopDistance) {
+      desiredSpeed = map(distance, 0, stopDistance, 0, this.maxSpeed);
+     }
     }
 
     force.setMag(desiredSpeed);

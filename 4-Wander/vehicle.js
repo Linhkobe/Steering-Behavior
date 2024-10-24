@@ -7,6 +7,13 @@ class Vehicle {
     this.maxForce = 0.2;
     this.r = 16;
 
+    //Propriétés aléatoires
+    this.maxSpeed = random(2, 6);
+    this.maxForce = random(0.1, 0.5);
+    this.r = random(8, 24);
+
+    //Couleur aléatoire
+    this.color = color(random(255), random(255), random(255));
 
     // pour comportement wander
     this.distanceCercle = 150;
@@ -15,9 +22,14 @@ class Vehicle {
     this.displaceRange = 0.3;
 
     this.path = [];
+    this.maxPathLength = 50;
   }
 
   wander() {
+    // Perlin noise
+    let noisePerlin = 0.1;
+    this.wanderTheta += map(noise(noisePerlin), 0,1, -this.displaceRange,this.displaceRange);
+
     // point devant le véhicule
     let wanderPoint = this.vel.copy();
     wanderPoint.setMag(this.distanceCercle);
@@ -129,7 +141,9 @@ class Vehicle {
     this.path.push(this.pos.copy());
 
     // si le tableau a plus de 50 éléments, on vire le plus ancien
-    // TODO
+    if (this.path.length > this.maxPathLength) {
+      this.path.shift();
+    }
 
   }
 
@@ -147,7 +161,7 @@ class Vehicle {
     console.log("show")
     stroke(255);
     strokeWeight(2);
-    fill(255);
+    fill(this.color);
     push();
     translate(this.pos.x, this.pos.y);
     rotate(this.vel.heading());
